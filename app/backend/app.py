@@ -48,6 +48,17 @@ def get_products():
     conn.close()
     return jsonify([to_json(r) for r in rows])
 
+@app.route('/products/<int:product_id>', methods=['GET'])
+def get_product(product_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(f'SELECT {COLUMNS} FROM products WHERE id = %s', (product_id,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+    if row is None:
+        return jsonify({'error': 'not found'}), 404
+    return jsonify(to_json(row))
 
 @app.route('/products', methods=['POST'])
 def add_product():
