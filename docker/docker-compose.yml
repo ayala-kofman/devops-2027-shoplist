@@ -1,5 +1,6 @@
 services:
 
+  # מסד הנתונים. backend מדבר איתו.
   postgres:
     image: postgres:15-alpine
     environment:
@@ -8,13 +9,14 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U shopuser -d shoplist"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # שרת ה-API (Flask). מדבר עם postgres ומקבל בקשות מ-frontend.
   backend:
     build:
       context: ../app/backend
@@ -27,6 +29,7 @@ services:
       postgres:
         condition: service_healthy
 
+  # שרת הסטטיסטיקה (Node). מדבר עם backend ומקבל בקשות מ-frontend.
   stats:
     build:
       context: ../app/stats
@@ -35,9 +38,11 @@ services:
     depends_on:
       - backend
 
+  # Nginx. מגיש את הדף ומעביר בקשות API ל-backend ול-stats.
   frontend:
     build:
       context: ../app/frontend
+      dockerfile: Dockerfile.multistage
     ports:
       - "8080:80"
     depends_on:
