@@ -3,10 +3,10 @@ apiVersion:
 kind:
 metadata:
   name:            # this name is the address. nginx.conf looks for it
-  namespace:
+  namespace: shoplist
 spec:
   selector:
     app:           # must match the label in stats-deployment.yml
   ports:
-    - port:
+    - port: 3000
       targetPort:

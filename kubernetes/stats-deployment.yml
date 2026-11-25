@@ -1,7 +1,7 @@
 # stats-deployment.yml - your turn (step 9a). Same pattern as backend-deployment.yml
 # stats has no Secret: it only talks to the backend
 apiVersion: apps/v1
-kind: ____
+kind: ____stats
 metadata:
   name: ____
   namespace: shoplist
@@ -9,11 +9,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ____
+      app: ____stats
   template:
     metadata:
       labels:
-        app: ____                # exactly the same label as above
+        app: ____stats                # exactly the same label as above
     spec:
       containers:
         - name: stats
@@ -27,6 +27,6 @@ spec:
           readinessProbe:
             httpGet:
               path: /health
-              port: ____
+              port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
